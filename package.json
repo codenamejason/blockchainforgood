@@ -1,0 +1,61 @@
+{
+  "name": "front-end",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.9.0",
+    "@material-ui/icons": "^4.5.1",
+    "@moneybutton/react-money-button": "^0.37.0",
+    "@openzeppelin/contracts": "^2.5.0",
+    "@studydefi/money-legos": "^1.0.12",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@uniswap/sdk": "^1.0.0-beta.4",
+    "bootstrap": "^4.4.1",
+    "classnames": "^2.2.6",
+    "path": "^0.12.7",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "web3": "^1.2.6"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.0",
+    "identicon": "^3.0.1",
+    "identicon.js": "^2.3.3",
+    "prettier": "^1.19.1",
+    "truffle-hdwallet-provider": "^1.0.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "dev": "set NODE_ENV=development rm -rf ./.cache && yarn && yarn start -H 0.0.0.0",
+    "develop": "yarn dev",
+    "build": "react-scripts build",
+    "format": "prettier --write src/**/*.{js,jsx}",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
