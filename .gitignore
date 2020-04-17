@@ -22,3 +22,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# until I get the private data stored as .env variables
+truffle-config.js

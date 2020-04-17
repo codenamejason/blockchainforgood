@@ -13,6 +13,6 @@ module.exports = {
         new HtmlWebpackPlugin({template: './src/index.html'})
     ],
     entry: './src/index.js',
-    output: path.resolve(__dirname, 'dist'),
+    output: path.resolve(__dirname, 'public'),
     filename: 'frontend.bundle.js'
 };
