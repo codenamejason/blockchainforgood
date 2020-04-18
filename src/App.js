@@ -11,56 +11,55 @@ import {
 } from "react-router-dom";
 import './App.css';
 
-function Hello(props) {
-  if (props.name) {
-    return <h1>Hello, {props.name}!</h1>;
-  } else {
-    return <span>Hey, stranger</span>;
-  }
-}
+// function Hello(props) {
+//   if (props.name) {
+//     return <h1>Hello, {props.name}!</h1>;
+//   } else {
+//     return <span>Hey, stranger</span>;
+//   }
+// }
 
-function ClickHere (props) {
-  //let time = setTimeout(function(){ appearingLink.style }, 3000);
+// function ClickHere (props) {
+//   //let time = setTimeout(function(){ appearingLink.style }, 3000);
 
-  return(
-    <div>
-      <a
-        className='App-link'
-        id='click-here' 
-        style={{ fontSize: '12px', cursor: 'pointer' }}
-        href='/home/index.js'  
-      >Click Here To Enter</a>
-    </div>
-  )
+//   return(
+//     <div>
+//       <a
+//         className='App-link'
+//         id='click-here' 
+//         style={{ fontSize: '12px', cursor: 'pointer' }}
+//         href='/home/index.js'  
+//       >Click Here To Enter</a>
+//     </div>
+//   )
   
-}
+// }
 
-function ModalSwitch() {
-  let location = useLocation();
+// function ModalSwitch() {
+//   let location = useLocation();
 
-  // This piece of state is set when one of the
-  // links is clicked. The `background` state
-  // is the location that we were at when one of
-  // the links was clicked. If it's there,
-  // use it as the location for the <Switch> so
-  // we show in the background, behind
-  // the modal.
-  let background = location.state && location.state.background;
+//   // This piece of state is set when one of the
+//   // links is clicked. The `background` state
+//   // is the location that we were at when one of
+//   // the links was clicked. If it's there,
+//   // use it as the location for the <Switch> so
+//   // we show in the background, behind
+//   // the modal.
+//   let background = location.state && location.state.background;
 
-  return (
-    <div>
-      <Switch location={background || location}>
-        <Route exact path="/" children={<Home />} />
-        <Route path="/about" children={<About />} />
-        <Route path="/topics/:id" children={<Topics />} />
-      </Switch>
+//   return (
+//     <div>
+//       <Switch location={background || location}>
+//         <Route exact path="/" children={<Home />} />
+//         <Route path="/about" children={<About />} />
+//         <Route path="/topics/:id" children={<Topics />} />
+//       </Switch>
 
-      {/* Show the modal when a background page is set */}
-      {background && <Route path="/topic/:id" children={<Modal />} />}
-    </div>
-  );
-}
-
+//       {/* Show the modal when a background page is set */}
+//       {background && <Route path="/topic/:id" children={<Modal />} />}
+//     </div>
+//   );
+// }
 
 function Home() {
   return (
