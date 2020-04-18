@@ -64,7 +64,7 @@ import './App.css';
 function Home() {
   return (
     <div>
-      {/* <Link to="/about">Visit the Gallery</Link> */}
+      {/* Home page */}
       <div>
       <header className="App-header">
         Patient Profile Collector
@@ -72,17 +72,7 @@ function Home() {
       </header>
       
       </div>
-      {/* <ul>
-        <li>
-          <Link to='/dashboard'>Dashboard</Link>
-        </li>
-        <li>
-          <Link to="/img/2">Tomato</Link>
-        </li>
-        <li>
-          <Link to="/img/4">Crimson</Link>
-        </li>
-      </ul> */}
+      
     </div>
   );
 }
