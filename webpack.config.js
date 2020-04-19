@@ -9,10 +9,10 @@ module.exports = {
             { test: /\.txt$/, use: 'raw-loader' }
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({template: './src/index.html'})
-    ],
+    // plugins: [
+    //     new HtmlWebpackPlugin({template: './src/index.html'})
+    // ],
     entry: './src/index.js',
-    output: path.resolve(__dirname, 'public'),
+    output: path.resolve(__dirname, 'build'),
     filename: 'frontend.bundle.js'
 };
