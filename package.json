@@ -22,6 +22,8 @@
     "babel-preset-stage-2": "6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.26.0",
+    "bnc-notify": "^1.1.2",
+    "bnc-onboard": "^1.7.5",
     "bootstrap": "^4.4.1",
     "classnames": "^2.2.6",
     "dotenv": "^8.2.0",
