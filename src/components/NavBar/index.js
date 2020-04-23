@@ -340,7 +340,7 @@ function NavBar () {
           <Switch>
               <Route path='/' exact component={Home}/>
               <Route path='/dashboard' component={Dashboard}/>
-              <Route path='/topic' component={Topics}/>
+              <Route path='/topics' component={Topics}/>
                             
           </Switch>
 
