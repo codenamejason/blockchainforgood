@@ -1,276 +1,104 @@
 import React from 'react';
+import NavBar from './components/NavBar'
+import Web3 from 'web3';
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-  useLocation,
-  useRouteMatch,
-  useParams
+  BrowserRouter as Router
 } from "react-router-dom";
-import './App.css';
+import clsx from 'clsx'
+import { makeStyles } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Drawer from '@material-ui/core/Drawer'
+import Container from '@material-ui/core/Container'
+import Typography from '@material-ui/core/Typography'
+// BlockNative onboarding
+//import Onboard from 'bnc-onboard';
+// "Eth.providers.givenProvider" will be set if in an Ethereum supported browser.
+//var Eth = require('web3-eth');
+//var eth = new Eth(Eth.givenProvider || 'ws://127.0.0.1:7545');
+// or using the web3 umbrella package
+var web3 = new Web3(Web3.givenProvider || 'ws://127.0.0.1:7545');
 
-// function Hello(props) {
-//   if (props.name) {
-//     return <h1>Hello, {props.name}!</h1>;
-//   } else {
-//     return <span>Hey, stranger</span>;
-//   }
-// }
+//const apiKeyBlockNative = '8e84cd42-1282-4e65-bcd0-da4f7b6ad7a4';
+//process.env.BLOCK_NATIVE_API_KEY;
+//console.log(apiKeyBlockNative)
 
-// function ClickHere (props) {
-//   //let time = setTimeout(function(){ appearingLink.style }, 3000);
+let networkId = 5777
+let accounts
+let address
+let balance
 
-//   return(
-//     <div>
-//       <a
-//         className='App-link'
-//         id='click-here' 
-//         style={{ fontSize: '12px', cursor: 'pointer' }}
-//         href='/home/index.js'  
-//       >Click Here To Enter</a>
-//     </div>
-//   )
+const drawerWidth = 240
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  drawerPaper: {
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    //width: drawerWidth,
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    background: '#535454',
+    color: '#fff',
+  },
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+}))
+
+
+const getBalance = async function() {
+  // const onboard = Onboard({
+  //   dappId: apiKeyBlockNative,
+  //   networkId: networkId,
+  //   subscriptions: {
+  //     wallet: wallet => {
+  //       web3 = new Web3(wallet.provider)
+  //     }
+  //   }
+  // })
+
+  accounts = await web3.eth.getAccounts();
+  address = accounts[0];
+  console.log(address)
+  return address
   
-// }
+}
 
-// function ModalSwitch() {
-//   let location = useLocation();
+// Main App Component
+function App() {
+  const classes = useStyles()
+  
+  balance = getBalance().then((b) => console.log(b))
 
-//   // This piece of state is set when one of the
-//   // links is clicked. The `background` state
-//   // is the location that we were at when one of
-//   // the links was clicked. If it's there,
-//   // use it as the location for the <Switch> so
-//   // we show in the background, behind
-//   // the modal.
-//   let background = location.state && location.state.background;
+  return (
+    <Router>
+      <div>
+        <NavBar />
+        <Home />
 
-//   return (
-//     <div>
-//       <Switch location={background || location}>
-//         <Route exact path="/" children={<Home />} />
-//         <Route path="/about" children={<About />} />
-//         <Route path="/topics/:id" children={<Topics />} />
-//       </Switch>
-
-//       {/* Show the modal when a background page is set */}
-//       {background && <Route path="/topic/:id" children={<Modal />} />}
-//     </div>
-//   );
-// }
+      </div>
+    </Router>
+  );
+}
 
 function Home() {
   return (
     <div>
       {/* Home page */}
       <div>
-      <header className="App-header">
-        Patient Profile Collector
-        {/* <ClickHere /> */}
-      </header>
-      
-      </div>
-      
-    </div>
-  );
-}
-
-function Modal() {
-  let history = useHistory();
-  let { id } = useParams();
-
-  let back = e => {
-    e.stopPropagation();
-    history.goBack();
-  };
-
-  return (
-    <div
-      onClick={back}
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        background: "rgba(0, 0, 0, 0.15)"
-      }}
-    >
-      <div
-        className="modal"
-        style={{
-          position: "absolute",
-          background: "#fff",
-          top: 25,
-          left: "10%",
-          right: "10%",
-          padding: 15,
-          border: "2px solid #444"
-        }}
-      >
-        <h1>Modal Content</h1>
-        
-
-        <button type="button" onClick={back}>
-          Close
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// function App() {
-//   return (
-//     <div className="App">{/* Navbar Here... */}
-//        <Router>
-//             <div className='navigator' style={{ fontSize: '16px', cursor: 'pointer' }}>
-//                 <ul style={{ listStyleType: 'none'}}>
-//                     <li>
-//                       <Link to="/" className='App-link'>Home</Link>
-//                     </li>
-//                     <li>
-//                       <Link to="/about" className='App-link'>About</Link>
-//                     </li>
-//                     <li>
-//                     < Link to="/dashboard" className='App-link'>Dashboard</Link>
-//                     </li>
-//                 </ul>
-//           <hr />
-//           {/*
-//             A <Switch> looks through all its children <Route>
-//             elements and renders the first one whose path
-//             matches the current URL. Use a <Switch> any time
-//             you have multiple routes, but you want only one
-//             of them to render at a time
-//           */}
-//           <Switch>
-//             <Route exact path="/">
-//               <Home />
-//             </Route>
-//             <Route path="/about">
-//               <About />
-//             </Route>
-//             <Route path="/:id" children={<Child />} >              
-//             </Route>
-//           </Switch>
-//         </div>
-//       </Router>
-//     </div>
-//   );
-// }
-
-function App() {
-  return (
-    <Router>
-      <div className='navigator' style={{ fontSize: '16px' }}>
-        <ul style={{ listStyleType: 'none', cursor: 'pointer'}}>
-          <li>
-            <Link to="/" className='App-link'>Home</Link>
-          </li>
-          <li>
-            <Link to="/about" className='App-link'>About</Link>
-          </li>
-          <li>
-            <Link to="/topics" className='App-link'>Topics</Link>
-          </li>
-          <li>
-            <Link to='/dashboard' className='App-link'>Dashboard</Link>
-          </li>
-        </ul>
-
-        <Switch>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/topics">
-            <Topics />
-          </Route>
-          <Route path='/dashboard'>
-            <Dashboard />
-          </Route>
-
-          {/* Home default path must be at bottom! not sure wwhy this is... */}
-          <Route path="/">
-            <Home />
-          </Route>
-          
-        </Switch>
-      </div>
-    </Router>
-  );
-}
-
-function Topics() {
-  let match = useRouteMatch();
-
-  return (
-    <div>
-      <h2>Topics</h2>
-
-      <ul>
-        <li>
-          <Link to={`${match.url}/covid-19`}>
-            Covid-19
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/general-practice`}>
-            General Practice
-          </Link>
-        </li>
-      </ul>
-
-      {/* The Topics page has its own <Switch> with more routes
-          that build on the /topics URL path. You can think of the
-          2nd <Route> here as an "index" page for all topics, or
-          the page that is shown when no topic is selected */}
-      <Switch>
-        <Route path={`${match.path}/:topicId`}>
-          <Topic />
-        </Route>
-        <Route path={match.path}>
-          <h3>Please select a topic.</h3>
-        </Route>
-      </Switch>
-    </div>
-  );
-}
-
-function Topic() {
-  let { topicId } = useParams();
-  return <h3>Requested topic ID: {topicId}</h3>;
-}
-
-function Child () {
-  let { id } = useParams();
-
-  // Add the Topic content here using id to fetch...
-  return (
-    <div>
-      {id}
-    </div>
-  )
-}
-
-// You can think of these components as "pages" in your app.
-// Move out later...
-
-
-function About() {
-  return (
-    <div>
-      <h2>About</h2>
-    </div>
-  );
-}
-
-
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
+      <main>
+          <Container>
+            <h2 style={{ textAlign: 'center' }}>Patient Collector Portal</h2>
+          </Container>         
+        </main>
+      </div>      
     </div>
   );
 }

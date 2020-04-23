@@ -23,8 +23,7 @@ body {
   background-color: #282c34;
   min-height: 10vh;
   max-height: 150vh;
-  display: flex;
-  flex-direction: row;
+  display: block;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -38,6 +37,16 @@ body {
   align-items: center;
   display: flex;
   flex-direction: row;
+}
+
+.navbar {
+  min-height: 10vh;
+  max-height: 150vh;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #61dafb;
 }
 
 .navigator {
