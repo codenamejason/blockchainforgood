@@ -1,4 +1,6 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
+import PropTypes from 'prop-types';
+import '../../App.css'
 import {
     BrowserRouter as Router,
     Switch,
@@ -9,52 +11,349 @@ import {
     useRouteMatch,
     useParams
   } from "react-router-dom";
-import '../../App.css';
+import { fade, makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import InputBase from '@material-ui/core/InputBase';
+import Badge from '@material-ui/core/Badge';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
+import Fab from '@material-ui/core/Fab';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Zoom from '@material-ui/core/Zoom';
+import Slide from '@material-ui/core/Slide';
 
-function NavBar ({ props }) {
-
-
-    return (
-        <Router>
-          <div className='navigator' style={{ fontSize: '16px' }}>
-            <ul style={{ listStyleType: 'none', cursor: 'pointer'}}>
-              <li>
-                <Link to="/" className='App-link'>Home</Link>
-              </li>
-              <li>
-                <Link to="/about" className='App-link'>About</Link>
-              </li>
-              <li>
-                <Link to="/topics" className='App-link'>Topics</Link>
-              </li>
-              <li>
-                <Link to='/dashboard' className='App-link'>Dashboard</Link>
-              </li>
-            </ul>
-    
-            <Switch>
-              <Route path="/about">
-                <About />
-              </Route>
-              <Route path="/topics">
-                <Topics />
-              </Route>
-              <Route path='/dashboard'>
-                <Dashboard />
-              </Route>
-    
-              {/* Home default path must be at bottom! not sure wwhy this is... */}
-              <Route path="/">
-                <Home />
-              </Route>
-              
-            </Switch>
-          </div>
-        </Router>
-      );
+function HideOnScroll(props) {
+  const trigger = useScrollTrigger();
+  return (
+    <Slide in={!trigger}>
+      <div>Hello</div>
+    </Slide>
+  );
 }
 
+const useStyles = makeStyles((theme) => ({
+  grow: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
+    },
+  },
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(3),
+      width: 'auto',
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputRoot: {
+    color: 'inherit',
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+  sectionDesktop: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  sectionMobile: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+}));
 
+// function ScrollTop(props) {
+//   const { children, window } = props;
+//   const classes = useStyles();
+//   // Note that you normally won't need to set the window ref as useScrollTrigger
+//   // will default to window.
+//   // This is only being set here because the demo is in an iframe.
+//   const trigger = useScrollTrigger({
+//     target: window ? window() : undefined,
+//     disableHysteresis: true,
+//     threshold: 100,
+//   });
+
+//   const handleClick = (event) => {
+//     const anchor = (event.target.ownerDocument || document)
+//                     .querySelector('#back-to-top-anchor');
+
+//     if (anchor) {
+//       anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+//     }
+//   };
+
+//   return (
+//     <Zoom in={trigger}>
+//       <div onClick={handleClick} role="presentation" className={classes.root}>
+//         {children}
+//       </div>
+//     </Zoom>
+//   );
+// }
+
+// ScrollTop.propTypes = {
+//   children: PropTypes.element,
+//   /**
+//    * Injected by the documentation to work in an iframe.
+//    * You won't need it on your project.
+//    */
+//   window: PropTypes.func,
+// };
+
+// function BackToTop(props) {
+//   return (
+//     <React.Fragment>
+//       <CssBaseline />
+//       {/* <AppBar>
+//         <Toolbar>
+//           <Typography variant="h6">Scroll to see button</Typography>
+//         </Toolbar>
+//       </AppBar> */}
+//       <Toolbar id="back-to-top-anchor" />
+//       <Container>
+//         {/* <Box my={2}>
+//           {[...new Array(12)]
+//             .map(
+//               () => `Cras mattis consectetur purus sit amet fermentum.
+//                 Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+//                 Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+//                 Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
+//             )
+//             .join('\n')}
+//         </Box> */}
+//       </Container>
+//       <ScrollTop {...props}>
+//         <Fab color="secondary" size="small" aria-label="scroll back to top">
+//           <KeyboardArrowUpIcon />
+//         </Fab>
+//       </ScrollTop>
+//     </React.Fragment>
+//   );
+// }
+
+function PrimarySearchAppBar() {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = useState('');
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState('');
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = (e) => {
+    setMobileMoreAnchorEl(e);
+  };
+
+  const handleMenuClose = (e) => {
+    setAnchorEl(e);
+    handleMobileMenuClose(e);
+  };
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+    </Menu>
+  );
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem>
+        <IconButton aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={0} color="secondary">
+            <MailIcon />
+          </Badge>
+        </IconButton>
+        <p>Messages</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton aria-label="show 11 new notifications" color="inherit">
+          <Badge badgeContent={0} color="secondary">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+    </Menu>
+  );
+
+  return (
+    <div className={classes.grow}>
+      <AppBar position="static">
+        <Toolbar id='back-to-top-anchor'>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="open drawer"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography className={classes.title} variant="h6" noWrap>
+            PCP
+          </Typography>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Enter tx or name here" 
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </div>
+          <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={0} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+              <Badge badgeContent={0} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+    </div>
+  );
+}
+
+function NavBar () {
+    return(
+      <div>
+        <PrimarySearchAppBar />
+        <div>
+
+
+          <Switch>
+              <Route path='/' exact component={Home}/>
+              <Route path='/dashboard' component={Dashboard}/>
+              <Route path='/topic' component={Topics}/>
+                            
+          </Switch>
+
+          {/* <ScrollTop {...props}>
+            <Fab color="secondary" size="small" aria-label="scroll back to top">
+              <KeyboardArrowUpIcon />
+            </Fab>
+          </ScrollTop> */}
+        </div>
+        
+      </div>
+    );   
+}
 
 function Home() {
     return (
@@ -243,45 +542,4 @@ export default NavBar;
 //     </div>
 //   );
 // }
-
-  
-  // function App() {
-  //   return (
-  //     <div className="App">{/* Navbar Here... */}
-  //        <Router>
-  //             <div className='navigator' style={{ fontSize: '16px', cursor: 'pointer' }}>
-  //                 <ul style={{ listStyleType: 'none'}}>
-  //                     <li>
-  //                       <Link to="/" className='App-link'>Home</Link>
-  //                     </li>
-  //                     <li>
-  //                       <Link to="/about" className='App-link'>About</Link>
-  //                     </li>
-  //                     <li>
-  //                     < Link to="/dashboard" className='App-link'>Dashboard</Link>
-  //                     </li>
-  //                 </ul>
-  //           <hr />
-  //           {/*
-  //             A <Switch> looks through all its children <Route>
-  //             elements and renders the first one whose path
-  //             matches the current URL. Use a <Switch> any time
-  //             you have multiple routes, but you want only one
-  //             of them to render at a time
-  //           */}
-  //           <Switch>
-  //             <Route exact path="/">
-  //               <Home />
-  //             </Route>
-  //             <Route path="/about">
-  //               <About />
-  //             </Route>
-  //             <Route path="/:id" children={<Child />} >              
-  //             </Route>
-  //           </Switch>
-  //         </div>
-  //       </Router>
-  //     </div>
-  //   );
-  // }
   
