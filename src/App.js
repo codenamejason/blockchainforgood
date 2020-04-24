@@ -10,6 +10,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Drawer from '@material-ui/core/Drawer'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
+import Connector from './data/connector'
 // BlockNative onboarding
 //import Onboard from 'bnc-onboard';
 // "Eth.providers.givenProvider" will be set if in an Ethereum supported browser.
@@ -82,7 +83,11 @@ function App() {
       <div>
         <NavBar />
         <Home />
-
+        <iframe
+          src="https://api.1up.health/connect/system/clinical?client_id=40227547fba945f4a157876a4cbf32be&access_token=r2GkGCyzqAKurxFhlK8KuZWNHXltaIdl&state={florida}"
+          height="500"
+          width="100%"
+        />
       </div>
     </Router>
   );

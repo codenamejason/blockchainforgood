@@ -1,10 +1,10 @@
 import Identifier from './idntifier'
 import CodeableConcept from './codeableConcept'
 import ContactPoint from './contactPoint'
-import Address from './address'
 import HumanName from './humanName'
 import Organization from './organization'
 import Attachment from './attachment'
+import Address from './address'
 
 
 const Patient = {
@@ -20,19 +20,19 @@ const Patient = {
         'valueCode' : 'renal'
     }],
     'active' : false,
-    'name' : [{ HumanName }],
-    'telecom' : [{ ContactPoint }],
+    'name' : { HumanName },
+    'telecom' : { ContactPoint },
     'gender' : { 'text' : '<code>'},
     'birthdate' : '<date>',
     // deceased[x]: Indicates if the individual is deceased or not. One of these 2:
     'deceasedBoolean' : false,
     'deceasedDateTime' : '<datetime>',
-    'address' : [{ Addrress }],
+    'address' : { Address },
     'maritalStatus' : { CodeableConcept },
     //multipleBirth[x]: Whether patient is part of a multiple birth. One of these 2:
     'multipleBirthBoolean' : false,
     'multipleBirthInteger' : 0,
-    'photo' :  [{ Attachment }],
+    'photo' :  { Attachment },
     'contact' :  [{
         "relationship": [{}],
         "name": '',
@@ -46,11 +46,10 @@ const Patient = {
         "language": {},
         "preferred": '<code>'
     }],
-    'generalPractitioner' : [{ Reference(Organization, Practitioner, PractitionerRole) 
-    }],
-    'managingOrganization' :  { Reference(Organization) },
+    'generalPractitioner' : {}, //[{ Reference(Organization, Practitioner, PractitionerRole) }]
+    'managingOrganization' :  {}, // { Reference(Organization) }
     'link' : [{
-        "other" : { Reference(Patient, RelatedPerson) },
+        "other" : {}, // { Reference(Patient, RelatedPerson) }
         "type" : "<code>"
     }],
     'blockchainMetadata' : {

@@ -1,12 +1,17 @@
+import CodeableConcept from './codeableConcept'
+import Period from './period'
+
 const Identifier = {
     'use' : '<code>',
     'type' : { CodeableConcept },
     'sytem' : '<uri>',
     'value' : '<string>',
     'period' : { Period },
-    'assigner' : { Reference(Organization) },
+    'assigner' : {  },
     'blocchainkMetadata' : {},
 }
+
+export default Identifier
 
 /// use - Applications can assume that an identifier is permanent unless it explicitly says that it is temporary
 /// type - This element deals only with general categories of identifiers. It SHOULD not be used for codes that correspond 
