@@ -11,6 +11,7 @@ import {
     useRouteMatch,
     useParams
   } from "react-router-dom";
+import Web3 from 'web3';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,8 +19,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import { MenuItem, Menu, Button } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -30,19 +30,29 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Zoom from '@material-ui/core/Zoom';
-import Slide from '@material-ui/core/Slide';
+import Onboard from 'bnc-onboard';
 
-function HideOnScroll(props) {
-  const trigger = useScrollTrigger();
-  return (
-    <Slide in={!trigger}>
-      <div>Hello</div>
-    </Slide>
-  );
-}
+
+let web3
+
+const onboard = Onboard({
+    dappId: '8e84cd42-1282-4e65-bcd0-da4f7b6ad7a4',
+    networkId: 5777, // 4 = Rinkeby, 3 = Ropsten, 1 = Main
+    darkMode: true,
+    subscriptions: {
+        wallet: wallet => {
+            web3 = new Web3(wallet.provider)
+            console.log(`${wallet.name} is now connected!`)
+        },
+        balance: balance => {
+
+            console.log(balance)
+        }
+    }
+})
+
+const currentState = onboard.getState()
+console.log(currentState)
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -108,75 +118,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// function ScrollTop(props) {
-//   const { children, window } = props;
-//   const classes = useStyles();
-//   // Note that you normally won't need to set the window ref as useScrollTrigger
-//   // will default to window.
-//   // This is only being set here because the demo is in an iframe.
-//   const trigger = useScrollTrigger({
-//     target: window ? window() : undefined,
-//     disableHysteresis: true,
-//     threshold: 100,
-//   });
 
-//   const handleClick = (event) => {
-//     const anchor = (event.target.ownerDocument || document)
-//                     .querySelector('#back-to-top-anchor');
-
-//     if (anchor) {
-//       anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//     }
-//   };
-
-//   return (
-//     <Zoom in={trigger}>
-//       <div onClick={handleClick} role="presentation" className={classes.root}>
-//         {children}
-//       </div>
-//     </Zoom>
-//   );
-// }
-
-// ScrollTop.propTypes = {
-//   children: PropTypes.element,
-//   /**
-//    * Injected by the documentation to work in an iframe.
-//    * You won't need it on your project.
-//    */
-//   window: PropTypes.func,
-// };
-
-// function BackToTop(props) {
-//   return (
-//     <React.Fragment>
-//       <CssBaseline />
-//       {/* <AppBar>
-//         <Toolbar>
-//           <Typography variant="h6">Scroll to see button</Typography>
-//         </Toolbar>
-//       </AppBar> */}
-//       <Toolbar id="back-to-top-anchor" />
-//       <Container>
-//         {/* <Box my={2}>
-//           {[...new Array(12)]
-//             .map(
-//               () => `Cras mattis consectetur purus sit amet fermentum.
-//                 Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-//                 Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-//                 Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-//             )
-//             .join('\n')}
-//         </Box> */}
-//       </Container>
-//       <ScrollTop {...props}>
-//         <Fab color="secondary" size="small" aria-label="scroll back to top">
-//           <KeyboardArrowUpIcon />
-//         </Fab>
-//       </ScrollTop>
-//     </React.Fragment>
-//   );
-// }
+async function connectWallet() {
+  await onboard.walletSelect();
+  await onboard.walletCheck(); 
+}
 
 function PrimarySearchAppBar() {
   const classes = useStyles();
@@ -273,7 +219,7 @@ function PrimarySearchAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            PCP
+            P C P
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -288,6 +234,7 @@ function PrimarySearchAppBar() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+          <div> <Button variant='contained' onClick={connectWallet} style={{ marginLeft: '25px' }}>Connect Wallet</Button></div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">

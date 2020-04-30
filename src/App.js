@@ -17,8 +17,8 @@ import Connector from './data/connector'
 //var Eth = require('web3-eth');
 //var eth = new Eth(Eth.givenProvider || 'ws://127.0.0.1:7545');
 // or using the web3 umbrella package
-var web3 = new Web3(Web3.givenProvider || 'ws://127.0.0.1:7545');
-
+var web3 = new Web3(Web3.givenProvider || 'ws://127.0.0.1:8545');
+//
 //const apiKeyBlockNative = '8e84cd42-1282-4e65-bcd0-da4f7b6ad7a4';
 //process.env.BLOCK_NATIVE_API_KEY;
 //console.log(apiKeyBlockNative)
@@ -76,7 +76,7 @@ const getBalance = async function() {
 function App() {
   const classes = useStyles()
   
-  balance = getBalance().then((b) => console.log(b))
+  //balance = getBalance().then((b) => console.log(b))
 
   return (
     <Router>
