@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import '../../App.css'
 import {
     BrowserRouter as Router,
-    Switch,
+    Switch as RouterSwitch,
     Route,
     Link,
     useHistory,
@@ -12,28 +12,33 @@ import {
     useParams
   } from "react-router-dom";
 import Web3 from 'web3';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
 import { MenuItem, Menu, Button } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Fab from '@material-ui/core/Fab';
 import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
 import Onboard from 'bnc-onboard';
-
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import Switch from '@material-ui/core/Switch';
 
 let web3
+const drawerWidth = 240;
 
 const onboard = Onboard({
     dappId: '8e84cd42-1282-4e65-bcd0-da4f7b6ad7a4',
@@ -45,18 +50,71 @@ const onboard = Onboard({
             console.log(`${wallet.name} is now connected!`)
         },
         balance: balance => {
-
             console.log(balance)
         }
     }
 })
 
-const currentState = onboard.getState()
-console.log(currentState)
+//const currentState = onboard.getState()
+//console.log(currentState)
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    //display: 'flex',
+  },
   grow: {
     flexGrow: 1,
+  },
+  appBar: {
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  hide: {
+    display: 'none',
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    marginLeft: -drawerWidth,
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -116,180 +174,149 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
 }));
 
-
+/**
+ * @dev Connect to a users wallet
+ */
 async function connectWallet() {
-  await onboard.walletSelect();
-  await onboard.walletCheck(); 
+    await onboard.walletSelect();
+    await onboard.walletCheck();
 }
 
-function PrimarySearchAppBar() {
+
+// <div> <Button variant='contained' onClick={connectWallet} style={{ marginLeft: '25px' }}>Connect Wallet</Button></div>
+
+
+function MenuAppBar() {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState('');
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState('');
+  const theme = useTheme();
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const [auth, setAuth] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [walletConnected, setWalletConnected] = React.useState(null)
+  //const open = Boolean(anchorEl);
+  const [open, setOpen] = React.useState(false);
+  
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
-  const handleProfileMenuOpen = (event) => {
+  const handleChange = (event) => {
+    setAuth(event.target.checked);
+    // check if already connected to wallet...
+
+    connectWallet()
+
+    // else
+    //onboard.walletReset()
+
+  };
+
+  const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = (e) => {
-    setMobileMoreAnchorEl(e);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  const handleMenuClose = (e) => {
-    setAnchorEl(e);
-    handleMobileMenuClose(e);
-  };
+  /**
+   * 
+   * @param {Boolean} isDrawerOpen 
+   */
+  const handleMenuClick = (isDrawerOpen) => {
+    if(isDrawerOpen){
+        setIsDrawerOpen(false)
+        console.info(isDrawerOpen)
+    } else {
+      setIsDrawerOpen(true)
+      console.info(isDrawerOpen)
+    }
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={0} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={0} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
+  }
 
   return (
-    <div className={classes.grow}>
+    <div className={classes.root}>
+      <CssBaseline />      
       <AppBar position="static">
-        <Toolbar id='back-to-top-anchor'>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
+        <Toolbar>
+          {/* Drawer Section open/close */}
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+            <Link href='/#' onClick={(e) => { handleMenuClick(isDrawerOpen); console.log(e); }}><MenuIcon /></Link>
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            P C P
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Enter tx or name here" 
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-          <div> <Button variant='contained' onClick={connectWallet} style={{ marginLeft: '25px' }}>Connect Wallet</Button></div>
-          <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
+
+          <Typography variant="h6" className={classes.title}>
+            Patient Data Collector
+          </Typography>         
+            <FormGroup>
+                <Button variant='contained' onClick={(e) => {
+                    connectWallet().then(() => { setWalletConnected(true)})            
+                }} style={{ marginLeft: '25px' }}>Connect Wallet</Button>
+            </FormGroup>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
+      <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
     </div>
   );
 }
 
 function NavBar () {
+  let match = useRouteMatch();
     return(
       <div>
-        <PrimarySearchAppBar />
         <div>
+         <MenuAppBar />
 
-
-          <Switch>
+          <RouterSwitch>
               <Route path='/' exact component={Home}/>
               <Route path='/dashboard' component={Dashboard}/>
               <Route path='/topics' component={Topics}/>
                             
-          </Switch>
+          </RouterSwitch>
 
           {/* <ScrollTop {...props}>
             <Fab color="secondary" size="small" aria-label="scroll back to top">
@@ -305,19 +332,10 @@ function NavBar () {
 function Home() {
     return (
       <div>
-        {/* Home page */}
-        <div>
-        <header className="App-header">
-          Patient Profile Collector
-          {/* <ClickHere /> */}
-        </header>
-        
-        </div>
-        
+
       </div>
     );
-  }
-  
+}  
 
 function Topics() {
     let match = useRouteMatch();
@@ -343,150 +361,157 @@ function Topics() {
             that build on the /topics URL path. You can think of the
             2nd <Route> here as an "index" page for all topics, or
             the page that is shown when no topic is selected */}
-        <Switch>
+        <RouterSwitch>
           <Route path={`${match.path}/:topicId`}>
             <Topic />
           </Route>
           <Route path={match.path}>
             <h3>Please select a topic.</h3>
           </Route>
-        </Switch>
+        </RouterSwitch>
       </div>
     );
-  }
+}
   
-  function Topic() {
-    let { topicId } = useParams();
-    return <h3>Requested topic ID: {topicId}</h3>;
-  }
+function Topic() {
+  let { topicId } = useParams();
+  return <h3>Requested topic ID: {topicId}</h3>;
+}
   
-  function Child () {
-    let { id } = useParams();
-  
-    // Add the Topic content here using id to fetch...
-    return (
-      <div>
-        {id}
-      </div>
-    )
-  }
-  
-  // You can think of these components as "pages" in your app.
-  // Move out later...
-  
-  
-  function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
-  
-  
-  function Dashboard() {
-    return (
-      <div>
+function Child () {
+  let { id } = useParams();
+
+  // Add the Topic content here using id to fetch...
+  return (
+    <div>
+      {id}
+    </div>
+  )
+}
+
+// You can think of these components as "pages" in your app.
+// Move out later...
+
+
+function About() {
+  return (
+    <div>
+      <h2>About</h2>
+    </div>
+  );
+}
+
+
+function Dashboard() {
+  return (
+    <div>
         <h2>Dashboard</h2>
       </div>
     );
-  }
+}
+
+function PersistentDrawerLeft() {
+    const classes = useStyles();
+    const theme = useTheme();
+    const [open, setOpen] = React.useState(false);
+  
+    const handleDrawerOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleDrawerClose = () => {
+      setOpen(false);
+    };
+  
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          className={clsx(classes.appBar, {
+            [classes.appBarShift]: open,
+          })}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              className={clsx(classes.menuButton, open && classes.hide)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              Persistent drawer
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <main
+          className={clsx(classes.content, {
+            [classes.contentShift]: open,
+          })}
+        >
+          <div className={classes.drawerHeader} />
+          <Typography paragraph>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+            ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
+            facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
+            gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
+            donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
+            adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
+            Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
+            imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
+            arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
+            donec massa sapien faucibus et molestie ac.
+          </Typography>
+          <Typography paragraph>
+            Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
+            facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
+            tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
+            consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
+            vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
+            hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
+            tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
+            nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
+            accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
+          </Typography>
+        </main>
+      </div>
+    );
+}
 
 export default NavBar;
-
-// function Modal() {
-//     let history = useHistory();
-//     let { id } = useParams();
-  
-//     let back = e => {
-//       e.stopPropagation();
-//       history.goBack();
-//     };
-  
-//     return (
-//       <div
-//         onClick={back}
-//         style={{
-//           position: "absolute",
-//           top: 0,
-//           left: 0,
-//           bottom: 0,
-//           right: 0,
-//           background: "rgba(0, 0, 0, 0.15)"
-//         }}
-//       >
-//         <div
-//           className="modal"
-//           style={{
-//             position: "absolute",
-//             background: "#fff",
-//             top: 25,
-//             left: "10%",
-//             right: "10%",
-//             padding: 15,
-//             border: "2px solid #444"
-//           }}
-//         >
-//           <h1>Modal Content</h1>
-          
-  
-//           <button type="button" onClick={back}>
-//             Close
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-  
-
-// function Hello(props) {
-//   if (props.name) {
-//     return <h1>Hello, {props.name}!</h1>;
-//   } else {
-//     return <span>Hey, stranger</span>;
-//   }
-// }
-
-// function ClickHere (props) {
-//   //let time = setTimeout(function(){ appearingLink.style }, 3000);
-
-//   return(
-//     <div>
-//       <a
-//         className='App-link'
-//         id='click-here' 
-//         style={{ fontSize: '12px', cursor: 'pointer' }}
-//         href='/home/index.js'  
-//       >Click Here To Enter</a>
-//     </div>
-//   )
-  
-// }
-
-// function ModalSwitch() {
-//   let location = useLocation();
-
-//   // This piece of state is set when one of the
-//   // links is clicked. The `background` state
-//   // is the location that we were at when one of
-//   // the links was clicked. If it's there,
-//   // use it as the location for the <Switch> so
-//   // we show in the background, behind
-//   // the modal.
-//   let background = location.state && location.state.background;
-
-//   return (
-//     <div>
-//       <Switch location={background || location}>
-//         <Route exact path="/" children={<Home />} />
-//         <Route path="/about" children={<About />} />
-//         <Route path="/topics/:id" children={<Topics />} />
-//       </Switch>
-
-//       {/* Show the modal when a background page is set */}
-//       {background && <Route path="/topic/:id" children={<Modal />} />}
-//     </div>
-//   );
-// }
-  

@@ -2,7 +2,7 @@ import React from 'react';
 import NavBar from './components/NavBar'
 import Web3 from 'web3';
 import {
-  BrowserRouter as Router
+  BrowserRouter as Router, useRouteMatch
 } from "react-router-dom";
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -51,31 +51,18 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
-}))
-
+}));
 
 const getBalance = async function() {
-  // const onboard = Onboard({
-  //   dappId: apiKeyBlockNative,
-  //   networkId: networkId,
-  //   subscriptions: {
-  //     wallet: wallet => {
-  //       web3 = new Web3(wallet.provider)
-  //     }
-  //   }
-  // })
-
   accounts = await web3.eth.getAccounts();
   address = accounts[0];
   console.log(address)
-  return address
-  
+  return address  
 }
 
 // Main App Component
 function App() {
-  const classes = useStyles()
-  
+  const classes = useStyles()  
   //balance = getBalance().then((b) => console.log(b))
 
   return (
@@ -84,7 +71,7 @@ function App() {
         <NavBar />
         <Home />
         <iframe
-          src="https://api.1up.health/connect/system/clinical?client_id=40227547fba945f4a157876a4cbf32be&access_token=r2GkGCyzqAKurxFhlK8KuZWNHXltaIdl&state={florida}"
+          src="https://quick.1up.health/connect/4748?client_id=40227547fba945f4a157876a4cbf32be&access_token=r2GkGCyzqAKurxFhlK8KuZWNHXltaIdl&state={florida}"
           height="500"
           width="100%"
         />
