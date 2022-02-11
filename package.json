@@ -11,7 +11,7 @@
     "@material-ui/core": "^4.9.0",
     "@material-ui/icons": "^4.5.1",
     "@moneybutton/react-money-button": "^0.37.0",
-    "@openzeppelin/contracts": "^2.5.0",
+    "@openzeppelin/contracts": "^4.4.2",
     "@studydefi/money-legos": "^1.0.12",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
